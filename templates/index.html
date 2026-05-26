@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Store Marketing Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    .step { display: none; }
+    .step.active { display: block; }
+    .post-box {
+      background: #EBF5FB;
+      border-left: 4px solid #2980B9;
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+    .post-label {
+      font-weight: 700;
+      color: #1F618D;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+    .post-meta { color: #7F8C8D; font-size: 0.78rem; margin-top: 4px; font-style: italic; }
+    .spinner { border: 4px solid #E0E0E0; border-top: 4px solid #2980B9; border-radius: 50%; width: 36px; height: 36px; animation: spin 0.8s linear infinite; margin: 0 auto; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .section-title { font-size: 1.1rem; font-weight: 700; margin: 20px 0 10px; padding-bottom: 4px; border-bottom: 2px solid #D5E8D4; }
+    .fb-title { color: #3B5998; border-color: #3B5998; }
+    .ig-title { color: #C13584; border-color: #C13584; }
+    .cal-table td, .cal-table th { padding: 8px 10px; border: 1px solid #ddd; font-size: 0.85rem; }
+    .cal-table th { background: #2C3E50; color: white; }
+    .cal-table tr:nth-child(even) { background: #f9f9f9; }
+    .copy-btn { cursor: pointer; color: #2980B9; font-size: 0.75rem; float: right; user-select: none; }
+    .copy-btn:hover { text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- Header -->
+  <header class="bg-white shadow-sm py-4 px-6 flex items-center gap-3 mb-8">
+    <div class="text-2xl">🛒</div>
+    <div>
+      <h1 class="text-xl font-bold text-gray-800">Store Marketing Generator</h1>
+      <p class="text-sm text-gray-500">Scan any online store → get a full Facebook & Instagram strategy</p>
+    </div>
+  </header>
+
+  <!-- Progress Bar -->
+  <div class="max-w-3xl mx-auto px-4 mb-8">
+    <div class="flex items-center gap-2">
+      <div id="prog1" class="flex items-center gap-2 text-blue-600 font-semibold text-sm">
+        <div class="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold">1</div>
+        Enter Details
+      </div>
+      <div class="flex-1 h-1 bg-gray-200 rounded" id="line12"></div>
+      <div id="prog2" class="flex items-center gap-2 text-gray-400 text-sm">
+        <div class="w-7 h-7 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs font-bold">2</div>
+        Products Found
+      </div>
+      <div class="flex-1 h-1 bg-gray-200 rounded" id="line23"></div>
+      <div id="prog3" class="flex items-center gap-2 text-gray-400 text-sm">
+        <div class="w-7 h-7 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs font-bold">3</div>
+        Strategy Ready
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4">
+
+    <!-- STEP 1: Input -->
+    <div id="step1" class="step active bg-white rounded-xl shadow p-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-6">Step 1: Enter Store Details</h2>
+
+      <div id="error-box" class="hidden bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-3 mb-5 text-sm"></div>
+
+      <label class="block text-sm font-medium text-gray-700 mb-1">Online Store URL *</label>
+      <input id="url-input" type="url" placeholder="https://example-shop.com"
+        class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm mb-5 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+
+      <div class="grid grid-cols-2 gap-4 mb-5">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Products to scan (5–50)</label>
+          <input id="max-products" type="number" value="30" min="5" max="50"
+            class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Content Language</label>
+          <select id="language" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option>English</option>
+            <option>Romanian</option>
+            <option>French</option>
+            <option>German</option>
+            <option>Spanish</option>
+            <option>Italian</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Brand Tone</label>
+        <select id="tone" class="w-full border border-gray-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <option>Friendly</option>
+          <option>Professional</option>
+          <option>Playful</option>
+          <option>Luxury</option>
+          <option>Bold</option>
+        </select>
+      </div>
+
+      <button id="crawl-btn" onclick="startCrawl()"
+        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg text-sm transition">
+        🔍 Start Scanning
+      </button>
+
+      <div id="crawl-spinner" class="hidden mt-6 text-center">
+        <div class="spinner mx-auto mb-3"></div>
+        <p class="text-sm text-gray-500">Scanning the store... this may take 30–60 seconds</p>
+      </div>
+    </div>
+
+    <!-- STEP 2: Products Preview -->
+    <div id="step2" class="step bg-white rounded-xl shadow p-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-1">Step 2: Products Found</h2>
+      <p id="store-name-display" class="text-blue-600 font-medium mb-4"></p>
+
+      <div id="product-list" class="mb-6 max-h-72 overflow-y-auto border border-gray-200 rounded-lg divide-y"></div>
+
+      <div id="gen-error" class="hidden bg-red-50 border border-red-300 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm"></div>
+
+      <button id="generate-btn" onclick="generateStrategy()"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg text-sm transition">
+        ✨ Generate Marketing Strategy
+      </button>
+
+      <div id="gen-spinner" class="hidden mt-6 text-center">
+        <div class="spinner mx-auto mb-3"></div>
+        <p class="text-sm text-gray-500">AI is creating your marketing strategy... 20–40 seconds</p>
+      </div>
+
+      <button onclick="resetToStep1()" class="mt-4 w-full text-gray-400 text-sm underline hover:text-gray-600">
+        ← Scan a different store
+      </button>
+    </div>
+
+    <!-- STEP 3: Results -->
+    <div id="step3" class="step bg-white rounded-xl shadow p-8">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-gray-800">Strategy Ready!</h2>
+          <p class="text-sm text-gray-500">Your marketing strategy is ready to download</p>
+        </div>
+        <a id="download-btn" href="/download"
+          class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg text-sm transition flex items-center gap-2">
+          ⬇️ Download Word Document
+        </a>
+      </div>
+
+      <!-- Brand Overview -->
+      <div id="brand-section"></div>
+
+      <!-- Facebook -->
+      <div class="section-title fb-title">📘 Facebook Strategy</div>
+      <div id="fb-posts"></div>
+      <div id="fb-ads"></div>
+
+      <!-- Instagram -->
+      <div class="section-title ig-title">📸 Instagram Strategy</div>
+      <div id="ig-posts"></div>
+      <div id="ig-hashtags"></div>
+      <div id="ig-extras"></div>
+
+      <!-- Calendar -->
+      <div class="section-title" style="color:#2C3E50">📅 7-Day Content Calendar</div>
+      <div id="calendar-section" class="overflow-x-auto mb-4"></div>
+
+      <!-- Campaigns -->
+      <div class="section-title" style="color:#6C3483">🚀 Promotional Campaigns</div>
+      <div id="campaigns-section"></div>
+
+      <!-- Tips -->
+      <div class="section-title" style="color:#117A65">💡 Posting Tips</div>
+      <div id="tips-section"></div>
+
+      <div class="mt-8 border-t pt-6 text-center">
+        <a href="/download"
+          class="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-4 rounded-lg text-base transition inline-block">
+          ⬇️ Download as Word Document (.docx)
+        </a>
+        <p class="text-xs text-gray-400 mt-2">Open in Microsoft Word → copy & paste posts to Facebook / Instagram</p>
+        <button onclick="resetToStep1()" class="mt-4 block mx-auto text-gray-400 text-sm underline hover:text-gray-600">
+          ← Generate for another store
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <div class="h-16"></div>
+
+<script>
+  let storeData = null;
+
+  function showError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  function hideError(id) {
+    document.getElementById(id).classList.add('hidden');
+  }
+
+  function setStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    // Update progress indicators
+    ['prog1','prog2','prog3'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      const circle = el.querySelector('div');
+      if (i + 1 < n) {
+        el.classList.remove('text-gray-400');
+        el.classList.add('text-green-600', 'font-semibold');
+        circle.className = 'w-7 h-7 rounded-full bg-green-500 text-white flex items-center justify-center text-xs font-bold';
+        circle.textContent = '✓';
+      } else if (i + 1 === n) {
+        el.classList.remove('text-gray-400');
+        el.classList.add('text-blue-600', 'font-semibold');
+        circle.className = 'w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold';
+        circle.textContent = i + 1;
+      } else {
+        el.classList.add('text-gray-400');
+        el.classList.remove('text-blue-600', 'text-green-600', 'font-semibold');
+        circle.className = 'w-7 h-7 rounded-full bg-gray-300 text-white flex items-center justify-center text-xs font-bold';
+        circle.textContent = i + 1;
+      }
+    });
+  }
+
+  function resetToStep1() {
+    storeData = null;
+    setStep(1);
+    document.getElementById('url-input').value = '';
+    hideError('error-box');
+    hideError('gen-error');
+  }
+
+  async function startCrawl() {
+    const url = document.getElementById('url-input').value.trim();
+    if (!url) { showError('error-box', 'Please enter a store URL.'); return; }
+    hideError('error-box');
+    document.getElementById('crawl-btn').disabled = true;
+    document.getElementById('crawl-spinner').classList.remove('hidden');
+
+    try {
+      const resp = await fetch('/crawl', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          url,
+          max_products: document.getElementById('max-products').value
+        })
+      });
+      const data = await resp.json();
+      if (!resp.ok) { showError('error-box', data.error || 'Crawl failed.'); return; }
+
+      storeData = data;
+      document.getElementById('store-name-display').textContent =
+        `✅ Found ${data.product_count} products from "${data.store_name}"`;
+
+      const list = document.getElementById('product-list');
+      list.innerHTML = '';
+      data.products.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'px-4 py-3 flex justify-between items-center text-sm';
+        div.innerHTML = `
+          <span class="font-medium text-gray-800">${escHtml(p.name)}</span>
+          <span class="text-gray-500 ml-4">${escHtml(p.price || '')}</span>
+        `;
+        list.appendChild(div);
+      });
+      if (data.product_count > 10) {
+        const note = document.createElement('div');
+        note.className = 'px-4 py-2 text-xs text-gray-400 italic';
+        note.textContent = `... and ${data.product_count - 10} more products (all will be used for strategy)`;
+        list.appendChild(note);
+      }
+
+      setStep(2);
+    } catch(e) {
+      showError('error-box', 'Network error. Is the app running?');
+    } finally {
+      document.getElementById('crawl-btn').disabled = false;
+      document.getElementById('crawl-spinner').classList.add('hidden');
+    }
+  }
+
+  async function generateStrategy() {
+    hideError('gen-error');
+    document.getElementById('generate-btn').disabled = true;
+    document.getElementById('gen-spinner').classList.remove('hidden');
+
+    try {
+      const resp = await fetch('/generate', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          tone: document.getElementById('tone').value,
+          language: document.getElementById('language').value
+        })
+      });
+      const data = await resp.json();
+      if (!resp.ok) { showError('gen-error', data.error || 'Generation failed.'); return; }
+
+      renderStrategy(data.strategy);
+      setStep(3);
+      window.scrollTo(0, 0);
+    } catch(e) {
+      showError('gen-error', 'Network error. Is the app running?');
+    } finally {
+      document.getElementById('generate-btn').disabled = false;
+      document.getElementById('gen-spinner').classList.add('hidden');
+    }
+  }
+
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function makePostBox(caption, label, meta) {
+    const id = 'post_' + Math.random().toString(36).slice(2);
+    return `
+      <div class="post-box" id="${id}">
+        <div class="post-label">
+          ${escHtml(label)}
+          <span class="copy-btn" onclick="copyPost('${id}')">📋 Copy</span>
+        </div>
+        ${escHtml(caption)}
+        ${meta ? `<div class="post-meta">${escHtml(meta)}</div>` : ''}
+      </div>`;
+  }
+
+  function copyPost(id) {
+    const el = document.getElementById(id);
+    const text = el.childNodes[2] ? el.childNodes[2].textContent.trim() : '';
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = el.querySelector('.copy-btn');
+      btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = '📋 Copy', 2000);
+    });
+  }
+
+  function makeBulletList(items) {
+    if (!items || !items.length) return '';
+    return '<ul class="list-disc list-inside text-sm text-gray-700 space-y-1 mb-4">' +
+      items.map(i => `<li>${escHtml(i)}</li>`).join('') + '</ul>';
+  }
+
+  function renderStrategy(s) {
+    // Brand
+    const brand = s.brand_overview || {};
+    let brandHtml = '';
+    if (brand.target_audience) brandHtml += `<p class="text-sm text-gray-700 mb-1"><strong>Target Audience:</strong> ${escHtml(brand.target_audience)}</p>`;
+    if (brand.brand_voice) brandHtml += `<p class="text-sm text-gray-700 mb-2"><strong>Brand Voice:</strong> ${escHtml(brand.brand_voice)}</p>`;
+    if (brand.unique_selling_points) {
+      brandHtml += `<p class="text-sm font-semibold mb-1">Unique Selling Points:</p>` + makeBulletList(brand.unique_selling_points);
+    }
+    document.getElementById('brand-section').innerHTML =
+      `<div class="section-title" style="color:#1F618D">🏪 Brand Overview</div>${brandHtml}`;
+
+    // Facebook posts
+    const fb = s.facebook_strategy || {};
+    let fbHtml = '';
+    (fb.posts || []).forEach((p, i) => {
+      const meta = [p.post_type, p.best_time].filter(Boolean).join('  |  ');
+      fbHtml += makePostBox(p.caption, `Post ${i+1}`, meta);
+    });
+    document.getElementById('fb-posts').innerHTML = `<p class="text-xs font-semibold text-gray-500 uppercase mb-3">Ready-to-Post Captions</p>` + fbHtml;
+
+    let fbAdsHtml = '';
+    (fb.ad_copy_variants || []).forEach((ad, i) => {
+      fbAdsHtml += `
+        <div class="border rounded-lg p-4 mb-3 bg-blue-50">
+          <p class="font-bold text-blue-800 text-sm mb-1">Ad ${i+1}: ${escHtml(ad.headline)}</p>
+          <p class="text-sm text-gray-700 mb-2">${escHtml(ad.body)}</p>
+          <p class="text-xs text-blue-600 font-semibold">CTA: ${escHtml(ad.call_to_action)}</p>
+        </div>`;
+    });
+    if (fbAdsHtml) document.getElementById('fb-ads').innerHTML =
+      `<p class="text-xs font-semibold text-gray-500 uppercase mb-3 mt-4">Ad Copy Variants</p>` + fbAdsHtml;
+
+    // Instagram posts
+    const ig = s.instagram_strategy || {};
+    let igHtml = '';
+    (ig.posts || []).forEach((p, i) => {
+      const meta = [p.post_type, p.visual_suggestion].filter(Boolean).join('  |  ');
+      igHtml += makePostBox(p.caption, `Post ${i+1}`, meta);
+    });
+    document.getElementById('ig-posts').innerHTML = `<p class="text-xs font-semibold text-gray-500 uppercase mb-3">Ready-to-Post Captions</p>` + igHtml;
+
+    // Hashtags
+    const ht = ig.hashtag_groups || {};
+    let htHtml = '<div class="space-y-3 mb-4">';
+    const htColors = {niche: 'purple', medium: 'blue', broad: 'green'};
+    Object.entries(ht).forEach(([group, tags]) => {
+      const c = htColors[group] || 'gray';
+      htHtml += `
+        <div>
+          <span class="text-xs font-bold text-${c}-600 uppercase">${group} reach: </span>
+          <span class="text-sm text-gray-700">${escHtml((tags || []).join(' '))}</span>
+        </div>`;
+    });
+    htHtml += '</div>';
+    document.getElementById('ig-hashtags').innerHTML = `<p class="text-xs font-semibold text-gray-500 uppercase mb-2 mt-4">Hashtag Groups</p>` + htHtml;
+
+    let extrasHtml = '';
+    if (ig.reel_ideas && ig.reel_ideas.length) {
+      extrasHtml += `<p class="text-xs font-semibold text-gray-500 uppercase mb-2 mt-3">Reel Ideas</p>` + makeBulletList(ig.reel_ideas);
+    }
+    if (ig.story_ideas && ig.story_ideas.length) {
+      extrasHtml += `<p class="text-xs font-semibold text-gray-500 uppercase mb-2 mt-3">Story Ideas</p>` + makeBulletList(ig.story_ideas);
+    }
+    document.getElementById('ig-extras').innerHTML = extrasHtml;
+
+    // Calendar
+    const cal = s.content_calendar || [];
+    if (cal.length) {
+      let calHtml = `<table class="cal-table w-full mb-4"><thead><tr>
+        <th>Day</th><th>Theme</th><th>Facebook</th><th>Instagram</th>
+      </tr></thead><tbody>`;
+      cal.forEach(row => {
+        calHtml += `<tr>
+          <td class="font-semibold">${escHtml(row.day)}</td>
+          <td>${escHtml(row.theme)}</td>
+          <td>${escHtml(row.facebook)}</td>
+          <td>${escHtml(row.instagram)}</td>
+        </tr>`;
+      });
+      calHtml += '</tbody></table>';
+      document.getElementById('calendar-section').innerHTML = calHtml;
+    }
+
+    // Campaigns
+    let campHtml = '';
+    (s.campaigns || []).forEach(c => {
+      campHtml += `
+        <div class="border rounded-lg p-4 mb-4 bg-purple-50">
+          <p class="font-bold text-purple-800 mb-1">${escHtml(c.name)}</p>
+          <p class="text-sm text-gray-700 mb-2">${escHtml(c.description)}</p>
+          <p class="text-xs text-gray-600"><strong>Duration:</strong> ${escHtml(c.duration)}</p>
+          <p class="text-xs text-gray-600"><strong>Facebook:</strong> ${escHtml(c.facebook_angle)}</p>
+          <p class="text-xs text-gray-600"><strong>Instagram:</strong> ${escHtml(c.instagram_angle)}</p>
+          <p class="text-xs text-green-700 mt-1"><strong>Outcome:</strong> ${escHtml(c.expected_outcome)}</p>
+        </div>`;
+    });
+    document.getElementById('campaigns-section').innerHTML = campHtml;
+
+    // Tips
+    const tips = s.posting_tips || {};
+    let tipsHtml = '';
+    if (tips.facebook) tipsHtml += `<p class="text-sm font-semibold text-blue-700 mb-1">Facebook</p>` + makeBulletList(tips.facebook);
+    if (tips.instagram) tipsHtml += `<p class="text-sm font-semibold text-pink-600 mb-1 mt-3">Instagram</p>` + makeBulletList(tips.instagram);
+    if (tips.general) tipsHtml += `<p class="text-sm font-semibold text-gray-600 mb-1 mt-3">General</p>` + makeBulletList(tips.general);
+    document.getElementById('tips-section').innerHTML = tipsHtml;
+  }
+
+  // Allow Enter key to trigger crawl
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('url-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') startCrawl();
+    });
+  });
+</script>
+</body>
+</html>

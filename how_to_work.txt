@@ -1,0 +1,34 @@
+  ---
+  Your app is ready at: Desktop\store-marketing-app\
+
+  What was built
+
+  A local web app you open in your browser that:
+  1. Scans any online store — extracts products, prices, categories
+  2. Generates a full strategy using Claude AI — 10 Facebook posts, 10 Instagram posts, 30 hashtags, 5 ad copy variants, a 7-day content calendar, 3
+  promotional campaigns
+  3. Exports to Word — a ready-to-use .docx you open in Word and copy-paste from
+
+  ---
+  How to start using it (step by step)
+
+  Prerequisites (do once):
+  1. Install Python from python.org — during install, tick "Add Python to PATH"
+  2. Get a Claude API key at console.anthropic.com → API Keys → Create Key → add $5 credit
+
+  First-time setup:
+  1. Open the store-marketing-app folder on your Desktop
+  2. Double-click setup.bat — wait for it to finish (installs everything)
+  3. Open the .env file in Notepad
+  4. Replace your-api-key-here with your actual API key, save the file
+
+  Every time you use it:
+  1. Double-click start_app.bat — browser opens automatically
+  2. Paste the store URL, choose language and tone, click Start Scanning
+  3. Review the found products, click Generate Marketing Strategy
+  4. Click Download as Word Document, open in Word, copy-paste posts
+
+  ---
+  Cost
+
+  Each strategy generation costs roughly $0.02 — so $5 credit = ~250 uses.
