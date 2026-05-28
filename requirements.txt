@@ -1,7 +1,6 @@
 flask
 requests
 beautifulsoup4
-playwright
 anthropic
 python-docx
 python-dotenv
